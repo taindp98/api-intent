@@ -52,10 +52,14 @@ def predict():
     enc_vector = encode_sentence(text,vocab2index,75)
     preds = load_model(enc_vector)
     prop_preds = nn.functional.softmax(preds,dim=1)
-    pred_label = prop_preds.argmax().item()
+    pred_idx = prop_preds.argmax().item()
     label = ['other_intent','type_edu','offer','review']
     # return label[pred_label]
-    return jsonify({"intent": label[pred_label]})
+    probability = prop_preds.tolist()[0][pred_idx]
+    # print(prop_preds.tolist())
+    return jsonify({"intent": label[pred_idx],\
+                    "probability":probability,\
+                    "message":text})
 
 
 if __name__=="__main__":
