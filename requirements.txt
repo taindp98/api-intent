@@ -4,5 +4,5 @@ sklearn
 pandas
 flask
 gunicorn
-torch=1.7.0
-appdirs = 1.4.4
+torch==1.7.0+cpu
+pyvi
