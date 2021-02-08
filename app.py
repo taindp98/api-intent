@@ -6,6 +6,7 @@ from flask import Flask, request,render_template,jsonify
 from flask_cors import CORS
 import torch.nn as nn
 import flask
+from model import LSTM_fixed_len
 app = Flask(__name__)
 CORS(app)
 
