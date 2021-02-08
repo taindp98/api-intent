@@ -1,0 +1,10 @@
+flask-cors
+numpy
+sklearn
+pandas
+flask
+gunicorn
+torch==1.7.0
+torchtext==0.4.0
+torchvision==0.3.0
+pyvi==0.1
