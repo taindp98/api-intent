@@ -53,7 +53,8 @@ def predict():
     preds = load_model(enc_vector)
     prop_preds = nn.functional.softmax(preds,dim=1)
     pred_idx = prop_preds.argmax().item()
-    label = ['other_intent','type_edu','offer','review']
+#    label = ['other_intent','type_edu','offer','review']
+    label = ['other_intent','type_edu','case','career']
     # return label[pred_label]
     probability = prop_preds.tolist()[0][pred_idx]
     # print(prop_preds.tolist())
