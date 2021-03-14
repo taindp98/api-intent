@@ -26,6 +26,8 @@ model_path = './model'
 load_model = load_checkpoint(os.path.join(model_path,'checkpoint.pth'))
 vocab2index = torch.load(os.path.join(model_path,'vocab.pth'))
 
+CONST_THRESHOLD = 0.7
+
 def tokenize(text):
     list_token = ViTokenizer.tokenize(text)
     return list_token.split(' ')
@@ -52,15 +54,23 @@ def predict():
     enc_vector = encode_sentence(text,vocab2index,75)
     preds = load_model(enc_vector)
     prop_preds = nn.functional.softmax(preds,dim=1)
+
     pred_idx = prop_preds.argmax().item()
+
 #    label = ['other_intent','type_edu','offer','review']
     label = ['other','type_edu','case','career']
     # return label[pred_label]
     probability = prop_preds.tolist()[0][pred_idx]
+
     # print(prop_preds.tolist())
-    return jsonify({"intent": label[pred_idx],\
-                    "probability":probability,\
-                    "message":text})
+    if probability >= CONST_THRESHOLD:
+        return jsonify({"intent": label[pred_idx],\
+                        "probability":probability,\
+                        "message":text})
+    else:
+        return jsonify({"intent": 'other',\
+                        "probability":1.0,\
+                        "message":text})
 
 
 if __name__=="__main__":
