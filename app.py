@@ -7,6 +7,8 @@ from flask_cors import CORS
 import torch.nn as nn
 import flask
 from model import LSTM_fixed_len
+import joblib
+
 app = Flask(__name__)
 CORS(app)
 
@@ -23,10 +25,14 @@ def load_checkpoint(filepath):
     return model
 
 model_path = './model'
-load_model = load_checkpoint(os.path.join(model_path,'checkpoint.pth'))
-vocab2index = torch.load(os.path.join(model_path,'vocab.pth'))
+# load_model = load_checkpoint(os.path.join(model_path,'checkpoint.pth'))
 
-CONST_THRESHOLD = 0.7
+load_model = joblib.load(os.path.join(model_path,'model_joblib.pkl'))
+
+# vocab2index = torch.load(os.path.join(model_path,'vocab.pth'))
+vocab2index = joblib.load(os.path.join(model_path,'vocab_joblib.pkl'))
+
+CONST_THRESHOLD = 0.8
 
 def tokenize(text):
     list_token = ViTokenizer.tokenize(text)
@@ -63,14 +69,14 @@ def predict():
     probability = prop_preds.tolist()[0][pred_idx]
 
     # print(prop_preds.tolist())
-    if probability >= CONST_THRESHOLD:
-        return jsonify({"intent": label[pred_idx],\
-                        "probability":probability,\
-                        "message":text})
-    else:
-        return jsonify({"intent": 'other',\
-                        "probability":1.0,\
-                        "message":text})
+    # if probability >= CONST_THRESHOLD:
+    return jsonify({"intent": label[pred_idx],\
+                    "probability":probability,\
+                    "message":text})
+    # else:
+        # return jsonify({"intent": 'other',\
+                        # "probability":1.0,\
+                        # "message":text})
 
 
 if __name__=="__main__":
