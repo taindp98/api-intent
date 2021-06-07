@@ -25,14 +25,14 @@ def load_checkpoint(filepath):
     return model
 
 model_path = './model'
-# load_model = load_checkpoint(os.path.join(model_path,'checkpoint.pth'))
+load_model = load_checkpoint(os.path.join(model_path,'checkpoint_3class.pth'))
 
-load_model = joblib.load(os.path.join(model_path,'model_joblib.pkl'))
+# load_model = joblib.load(os.path.join(model_path,'model_joblib.pkl'))
 
-# vocab2index = torch.load(os.path.join(model_path,'vocab.pth'))
-vocab2index = joblib.load(os.path.join(model_path,'vocab_joblib.pkl'))
+vocab2index = torch.load(os.path.join(model_path,'vocab_3class.pth'))
+# vocab2index = joblib.load(os.path.join(model_path,'vocab_joblib.pkl'))
 
-CONST_THRESHOLD = 0.8
+# CONST_THRESHOLD = 0.8
 
 def tokenize(text):
     list_token = ViTokenizer.tokenize(text)
@@ -57,14 +57,16 @@ def predict():
     # text=request.get_data(as_text=True)
     input_data = request.get_json(force=True)
     text = input_data['message']
-    enc_vector = encode_sentence(text,vocab2index,75)
+    enc_vector = encode_sentence(text,vocab2index,20)
     preds = load_model(enc_vector)
     prop_preds = nn.functional.softmax(preds,dim=1)
 
     pred_idx = prop_preds.argmax().item()
+    # print('pred_idx',pred_idx)
 
 #    label = ['other_intent','type_edu','offer','review']
-    label = ['other','type_edu','case','career']
+    # label = ['other','type_edu','case','career']
+    label = ['type_edu','case','career']
     # return label[pred_label]
     probability = prop_preds.tolist()[0][pred_idx]
 
@@ -73,10 +75,6 @@ def predict():
     return jsonify({"intent": label[pred_idx],\
                     "probability":probability,\
                     "message":text})
-    # else:
-        # return jsonify({"intent": 'other',\
-                        # "probability":1.0,\
-                        # "message":text})
 
 
 if __name__=="__main__":
